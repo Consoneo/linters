@@ -12,10 +12,6 @@ import (
 
 func main() {
 
-	// Set log level: if -v flag is passed, set log level to debug
-	if len(os.Args) > 1 && os.Args[1] == "-v" {
-		log.SetLevel(log.DebugLevel)
-	}
 	analyse := engine.Analyse{}
 
 	app := &cli.App{
@@ -31,12 +27,28 @@ func main() {
 				Name:    "lint",
 				Aliases: []string{"l"},
 				Usage:   "lint your projects",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:     "verbose",
+						Aliases:  []string{"v"},
+						Usage:    "Enable verbose mode",
+						Category: "Global options",
+					},
+				},
 				Action: func(cCtx *cli.Context) error {
+					
+					if cCtx.Bool("verbose") {
+						log.SetLevel(log.DebugLevel)
+					}
+
 					err := analyse.Lint()
 					if err == nil {
-						style := lipgloss.NewStyle().Background(lipgloss.Color("#00FF00")).Foreground(lipgloss.Color("#000000"))
+						// at the bottom of the screen
+						style := lipgloss.NewStyle().Background(lipgloss.Color("#00FF00")).Foreground(lipgloss.Color("#000000")).AlignVertical(lipgloss.Bottom).MarginTop(2)
 						fmt.Fprintf(os.Stdout, "%s\n", style.Render("Success"))
 					}
+
+					analyse.ListReports()
 					return err
 				},
 			},

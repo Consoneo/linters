@@ -49,6 +49,12 @@ func (o *Analyse) Lint() error {
 		os.Exit(1)
 	}
 
+	// Ensure build dir is empty
+	if os.RemoveAll("build") != nil {
+		fmt.Println("Error removing build directory")
+		os.Exit(1)
+	}
+
 	// Start spinner
 	sm := ysmrr.NewSpinnerManager()
 	sm.Start()
@@ -58,6 +64,7 @@ func (o *Analyse) Lint() error {
 	ch := make(chan int)
 
 	languages := []string{"php", "javascript", "css", "html"}
+
 	for _, language := range languages {
 
 		// check if language is configured
@@ -89,7 +96,7 @@ func (o *Analyse) Lint() error {
 			pattern = "*.html"
 		}
 
-		config := config.Config{
+		executionConfig := config.Config{
 			Version: version,
 			Pattern: pattern,
 		}
@@ -120,8 +127,8 @@ func (o *Analyse) Lint() error {
 
 						spinner := sm.AddSpinner("(" + language + ") " + availableRule.Name())
 
-						config.Path = dir.(string)
-						_, err := availableRule.Execute(config)
+						executionConfig.Path = dir.(string)
+						_, err := availableRule.Execute(executionConfig)
 						if err != nil {
 							spinner.Error()
 						} else {
@@ -134,6 +141,33 @@ func (o *Analyse) Lint() error {
 						}
 						ch <- result
 					}(rule)
+				}
+			}
+
+			// custom commands
+			if _, ok := yamlConfig.(map[interface{}]interface{})["commands"]; ok {
+				commands := yamlConfig.(map[interface{}]interface{})["commands"].([]interface{})
+				for _, command := range commands {
+					wg.Add(1)
+					go func(command interface{}) {
+						defer wg.Done()
+
+						spinner := sm.AddSpinner("(" + language + ") " + command.(string))
+
+						customCommand := rules.CustomCommand{Command: command.(string)}
+						_, err := customCommand.Execute()
+						if err != nil {
+							spinner.Error()
+						} else {
+							spinner.Complete()
+						}
+
+						result := 0
+						if err != nil {
+							result = 1
+						}
+						ch <- result
+					}(command)
 				}
 			}
 		}
@@ -187,6 +221,8 @@ func (o *Analyse) InitConfig() {
       - no-exit
       - psr1
       - psr2
+	commands:
+	  - bash mycustomcommand.sh
       
   javascript:
     version: "8.1"
@@ -260,4 +296,37 @@ func (o *Analyse) ListRules() {
 	}
 
 	fmt.Println(t.Render())
+}
+
+func (o *Analyse) ListReports() {
+	// List reports in the build folder
+	reports := []string{}
+	folders, err := os.ReadDir("build")
+	if err != nil {
+		fmt.Println("Error reading build directory: ", err)
+		os.Exit(1)
+	}
+
+	for _, folder := range folders {
+		if folder.IsDir() {
+			reports = append(reports, folder.Name())
+		}
+	}
+
+	if len(reports) > 0 {
+
+		style := lipgloss.NewStyle().Foreground(lipgloss.Color("99")).MarginTop(2)
+		fmt.Fprintf(os.Stdout, "%s\n", style.Render("Some reports were generated"))
+
+		t := table.New().
+			Border(lipgloss.NormalBorder()).
+			BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
+			Headers("REPORTS")
+
+		for _, report := range reports {
+			t.Row("./build/" + report)
+		}
+
+		fmt.Println(t.Render())
+	}
 }

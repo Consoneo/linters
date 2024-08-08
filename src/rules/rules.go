@@ -9,7 +9,10 @@ func Rules() []Rule {
 		&Psr12{},
 		&Psr1{},
 		&Psr2{},
+		&Symfony{},
 		// javascript
 		&EsLint{},
+		// agnostic
+		&AstMetrics{},
 	}
 }
