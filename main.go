@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Consoneo/linters/src/engine"
+	"github.com/charmbracelet/lipgloss"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -17,14 +19,25 @@ func main() {
 	analyse := engine.Analyse{}
 
 	app := &cli.App{
+		Name:  "linters",
+		Usage: "Lint and share your linting rules across projects",
+		Authors: []*cli.Author{
+			{
+				Name:  "Consoneo",
+			},
+		},
 		Commands: []*cli.Command{
 			{
 				Name:    "lint",
 				Aliases: []string{"l"},
 				Usage:   "lint your projects",
 				Action: func(cCtx *cli.Context) error {
-					analyse.Lint()
-					return nil
+					err := analyse.Lint()
+					if err == nil {
+						style := lipgloss.NewStyle().Background(lipgloss.Color("#00FF00")).Foreground(lipgloss.Color("#000000"))
+						fmt.Fprintf(os.Stdout, "%s\n", style.Render("Success"))
+					}
+					return err
 				},
 			},
 			{
@@ -58,7 +71,8 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		style := lipgloss.NewStyle().Background(lipgloss.Color("#FF0000")).Foreground(lipgloss.Color("#000000"))
+		fmt.Fprintf(os.Stderr, "%s\n", style.Render(err.Error()))
 	}
 
 }

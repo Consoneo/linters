@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"sync"
@@ -15,7 +16,7 @@ import (
 
 type Analyse struct{}
 
-func (o *Analyse) Lint() {
+func (o *Analyse) Lint() error {
 	lintFile := ".linters.yaml"
 
 	// check if the file exists
@@ -51,7 +52,10 @@ func (o *Analyse) Lint() {
 	// Start spinner
 	sm := ysmrr.NewSpinnerManager()
 	sm.Start()
+
+	// Start channels
 	var wg sync.WaitGroup
+	ch := make(chan int)
 
 	languages := []string{"php", "javascript", "css", "html"}
 	for _, language := range languages {
@@ -99,7 +103,6 @@ func (o *Analyse) Lint() {
 
 			// get rules
 			rulesToApply := yamlConfig.(map[interface{}]interface{})["rules"].([]interface{})
-			ch := make(chan int, len(rulesToApply))
 
 			availableRules := rules.Rules()
 			for _, availableRule := range availableRules {
@@ -113,6 +116,7 @@ func (o *Analyse) Lint() {
 
 					wg.Add(1)
 					go func(rule interface{}) {
+						defer wg.Done()
 
 						spinner := sm.AddSpinner("(" + language + ") " + availableRule.Name())
 
@@ -124,16 +128,34 @@ func (o *Analyse) Lint() {
 							spinner.Complete()
 						}
 
-						wg.Done()
-						ch <- 1
+						result := 0
+						if err != nil {
+							result = 1
+						}
+						ch <- result
 					}(rule)
 				}
 			}
 		}
 	}
 
-	wg.Wait()
-	sm.Stop()
+	go func() {
+		wg.Wait()
+		close(ch)
+		sm.Stop()
+	}()
+
+	// get the sums of all the results
+	var sum int
+	for r := range ch {
+		sum += r
+	}
+
+	if sum > 0 {
+		return errors.New("linting failed")
+	}
+
+	return nil
 }
 
 func (o *Analyse) InitConfig() {
@@ -231,7 +253,6 @@ func (o *Analyse) ListRules() {
 		Border(lipgloss.NormalBorder()).
 		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
 		Headers("RULE", "DESCRIPTION")
-
 
 	availableRules := rules.Rules()
 	for _, availableRule := range availableRules {
