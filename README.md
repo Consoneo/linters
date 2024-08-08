@@ -44,7 +44,7 @@ linter rules
 
 ## License
 
-AST Metrics is open-source software [licensed under the MIT license](LICENSE)
+Linters is open-source software [licensed under the MIT license](LICENSE)
 
 ## Sponsors
 
