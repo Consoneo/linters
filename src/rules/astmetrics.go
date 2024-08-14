@@ -29,14 +29,6 @@ func (o *AstMetrics) Execute(c config.Config) (string, error) {
 		}
 	}
 
-	// Ensure build dir exists
-	if _, err := os.Stat("build"); os.IsNotExist(err) {
-		if err := os.Mkdir("build", 0755); err != nil {
-			log.Error("Error creating build directory: ", err)
-			return "", err
-		}
-	}
-
 	command := binaryPath + " analyze --non-interactive --report-html=build/astmetrics " + c.Path
 	log.Debug("Executing command: ", command)
 

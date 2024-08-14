@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
 	"github.com/chelnak/ysmrr"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
@@ -53,6 +54,14 @@ func (o *Analyse) Lint() error {
 	if os.RemoveAll("build") != nil {
 		fmt.Println("Error removing build directory")
 		os.Exit(1)
+	}
+
+	// Ensure build dir exists
+	if _, err := os.Stat("build"); os.IsNotExist(err) {
+		if err := os.Mkdir("build", 0755); err != nil {
+			log.Error("Error creating build directory: ", err)
+			os.Exit(1)
+		}
 	}
 
 	// Start spinner
