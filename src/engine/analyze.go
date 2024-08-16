@@ -146,6 +146,12 @@ func (o *Analyse) executeLint(lintType string) error {
 
 						executionConfig.Path = dir.(string)
 
+						// if path is not absolute, make it absolute
+						if dir.(string)[0] != '/' {
+							executionConfig.Path, _ = os.Getwd()
+							executionConfig.Path += "/" + dir.(string)
+						}
+
 						var err error
 						if lintType == "lint" {
 							_, err = availableRule.Execute(executionConfig)
