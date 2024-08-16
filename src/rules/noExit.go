@@ -11,7 +11,7 @@ func (o *NoExit) Execute(config config.Config) (string, error) {
 }
 
 func (o *NoExit) Name() string {
-	return "No exit; in code"
+	return "Check for exit() in code"
 }
 
 func (o *NoExit) Slug() string {

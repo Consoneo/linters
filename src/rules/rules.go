@@ -10,6 +10,8 @@ func Rules() []Rule {
 		&Psr1{},
 		&Psr2{},
 		&Symfony{},
+		&PhpStan{},
+		&PhpCS{},
 		// javascript
 		&EsLint{},
 		// agnostic

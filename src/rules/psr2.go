@@ -11,7 +11,7 @@ func (o *Psr2) Execute(config config.Config) (string, error) {
 }
 
 func (o *Psr2) Name() string {
-	return "PSR2"
+	return "Check for PSR2 compliance"
 }
 
 func (o *Psr2) Slug() string {

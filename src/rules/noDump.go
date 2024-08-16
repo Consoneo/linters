@@ -11,7 +11,7 @@ func (o *NoDump) Execute(config config.Config) (string, error) {
 }
 
 func (o *NoDump) Name() string {
-	return "No var_dump in code"
+	return "Check for var_dump in code"
 }
 
 func (o *NoDump) Slug() string {

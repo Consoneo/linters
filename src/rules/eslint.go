@@ -11,7 +11,7 @@ func (o *EsLint) Execute(config config.Config) (string, error) {
 }
 
 func (o *EsLint) Name() string {
-	return "ESLint"
+	return "Run ESLint"
 }
 
 func (o *EsLint) Slug() string {

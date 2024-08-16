@@ -11,7 +11,7 @@ func (o *NoSyntaxError) Execute(config config.Config) (string, error) {
 }
 
 func (o *NoSyntaxError) Name() string {
-	return "No syntax error"
+	return "Check for syntax errors in PHP files"
 }
 
 func (o *NoSyntaxError) Slug() string {
