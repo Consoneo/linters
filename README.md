@@ -6,7 +6,12 @@ The same linting rules for all your teams!
 
 No dependency required.
 
-Download the correct binary for your platform in the [release page](https://github.com/BlusparkTeam/linters/releases).
+```console
+curl -s https://raw.githubusercontent.com/BlusparkTeam/linters/main/scripts/download.sh|bash
+chmod +x linters
+```
+
+Or download the correct binary for your platform in the [release page](https://github.com/BlusparkTeam/linters/releases).
 
 
 Some linters use Docker to run, so you need to have Docker installed on your machine.
