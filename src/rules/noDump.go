@@ -17,3 +17,11 @@ func (o *NoDump) Name() string {
 func (o *NoDump) Slug() string {
 	return "no-dump"
 }
+
+func (o *NoDump) CanFix() bool {
+	return false
+}
+
+func (o *NoDump) Fix(config config.Config) (string, error) {
+	return "", nil
+}

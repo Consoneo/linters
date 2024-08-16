@@ -8,4 +8,8 @@ type Rule interface {
 	Name() string
 
 	Execute(config config.Config) (string, error)
+
+	CanFix() bool
+
+	Fix(config config.Config) (string, error)
 }

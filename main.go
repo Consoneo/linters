@@ -53,6 +53,33 @@ func main() {
 				},
 			},
 			{
+				Name:    "fix",
+				Aliases: []string{"f"},
+				Usage:   "fix what can be fixed",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:     "verbose",
+						Aliases:  []string{"v"},
+						Usage:    "Enable verbose mode",
+						Category: "Global options",
+					},
+				},
+				Action: func(cCtx *cli.Context) error {
+					
+					if cCtx.Bool("verbose") {
+						log.SetLevel(log.DebugLevel)
+					}
+
+					err := analyse.Fix()
+					if err == nil {
+						// at the bottom of the screen
+						style := lipgloss.NewStyle().Background(lipgloss.Color("#00FF00")).Foreground(lipgloss.Color("#000000")).AlignVertical(lipgloss.Bottom).MarginTop(2)
+						fmt.Fprintf(os.Stdout, "%s\n", style.Render("Success"))
+					}
+					return err
+				},
+			},
+			{
 				Name:    "init",
 				Aliases: []string{"i"},
 				Usage:   "Initialize config file",

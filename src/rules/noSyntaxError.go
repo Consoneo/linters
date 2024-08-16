@@ -17,3 +17,12 @@ func (o *NoSyntaxError) Name() string {
 func (o *NoSyntaxError) Slug() string {
 	return "no-syntax-error"
 }
+
+func (o *NoSyntaxError) CanFix() bool {
+	return false
+}
+
+func (o *NoSyntaxError) Fix(config config.Config) (string, error) {
+	return "", nil
+}
+

@@ -17,3 +17,13 @@ func (o *Symfony) Name() string {
 func (o *Symfony) Slug() string {
 	return "symfony"
 }
+
+func (o *Symfony) CanFix() bool {
+	return true
+}
+
+func (o *Symfony) Fix(config config.Config) (string, error) {
+	command := "docker run --rm -v " + config.Path + ":/code ghcr.io/php-cs-fixer/php-cs-fixer:${FIXER_VERSION:-3-php" + config.Version + "} fix --rules=@Symfony ."
+	return ExecuteCommandAndExpectNoResultToBeCorrect(command)
+}
+

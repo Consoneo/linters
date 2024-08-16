@@ -17,3 +17,12 @@ func (o *PhpStan) Name() string {
 func (o *PhpStan) Slug() string {
 	return "phpstan"
 }
+
+func (o *PhpStan) CanFix() bool {
+	return false
+}
+
+func (o *PhpStan) Fix(config config.Config) (string, error) {
+	return "", nil
+}
+

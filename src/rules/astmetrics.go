@@ -44,3 +44,11 @@ func (o *AstMetrics) Name() string {
 func (o *AstMetrics) Slug() string {
 	return "ast-metrics"
 }
+
+func (o *AstMetrics) CanFix() bool {
+	return false
+}
+
+func (o *AstMetrics) Fix(config config.Config) (string, error) {
+	return "", nil
+}

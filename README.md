@@ -11,9 +11,9 @@ Download the correct binary for your platform in the [release page](https://gith
 
 Some linters use Docker to run, so you need to have Docker installed on your machine.
 
-## Usage
+## Getting started
 
-Initialize the configuration file:
+Generate a `.linter.yaml` the configuration file:
 
 ```console
 linter init
@@ -21,13 +21,40 @@ linter init
 
 Edit the `.linter.yaml` file to fit your needs.
 
+For example:
+
+```yaml
+lints:
+  php:
+    version: "8.1"
+    src:
+      - src1
+      - my_another_directory
+    rules:
+      - no-syntax-error
+      - no-dump
+      - no-exit
+      - psr12
+```
+
 Then lint your files:
 
 ```console
 linter lint
 ```
 
-Note: you can initialize a pre-commit hook with:
+## Auto-fix
+
+Some linters can fix the code for you:
+
+```console
+linter fix
+```
+
+## Integration with git
+
+
+You can initialize a pre-commit hook with:
 
 ```console
 linter install

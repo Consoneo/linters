@@ -18,6 +18,14 @@ import (
 type Analyse struct{}
 
 func (o *Analyse) Lint() error {
+	return o.executeLint("lint")
+}
+
+func (o *Analyse) Fix() error {
+	return o.executeLint("fix")
+}
+
+func (o *Analyse) executeLint(lintType string) error {
 	lintFile := ".linters.yaml"
 
 	// check if the file exists
@@ -137,7 +145,18 @@ func (o *Analyse) Lint() error {
 						spinner := sm.AddSpinner("(" + language + ") " + availableRule.Name())
 
 						executionConfig.Path = dir.(string)
-						_, err := availableRule.Execute(executionConfig)
+
+						var err error
+						if lintType == "lint" {
+							_, err = availableRule.Execute(executionConfig)
+						} else {
+							if availableRule.CanFix() {
+								_, err = availableRule.Fix(executionConfig)
+							} else {
+								spinner.UpdateMessage("skipped: " + availableRule.Name())
+							}
+						}
+
 						if err != nil {
 							spinner.Error()
 						} else {
@@ -297,11 +316,17 @@ func (o *Analyse) ListRules() {
 	t := table.New().
 		Border(lipgloss.NormalBorder()).
 		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99"))).
-		Headers("RULE", "DESCRIPTION")
+		Headers("RULE", "DESCRIPTION", "AUTO FIX")
 
 	availableRules := rules.Rules()
+	yesText := lipgloss.NewStyle().Foreground(lipgloss.Color("118")).Render("yes")
+	noText := lipgloss.NewStyle().Foreground(lipgloss.Color("196")).Render("no")
 	for _, availableRule := range availableRules {
-		t.Row(availableRule.Slug(), availableRule.Name())
+		fixable := noText
+		if availableRule.CanFix() {
+			fixable = yesText
+		}
+		t.Row(availableRule.Slug(), availableRule.Name(), fixable)
 	}
 
 	fmt.Println(t.Render())

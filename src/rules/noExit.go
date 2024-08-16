@@ -17,3 +17,11 @@ func (o *NoExit) Name() string {
 func (o *NoExit) Slug() string {
 	return "no-exit"
 }
+
+func (o *NoExit) CanFix() bool {
+	return false
+}
+
+func (o *NoExit) Fix(config config.Config) (string, error) {
+	return "", nil
+}

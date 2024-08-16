@@ -17,3 +17,11 @@ func (o *EsLint) Name() string {
 func (o *EsLint) Slug() string {
 	return "eslint"
 }
+
+func (o *EsLint) CanFix() bool {
+	return false
+}
+
+func (o *EsLint) Fix(config config.Config) (string, error) {
+	return "", nil
+}

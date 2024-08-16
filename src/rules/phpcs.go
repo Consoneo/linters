@@ -19,3 +19,12 @@ func (o *PhpCS) Name() string {
 func (o *PhpCS) Slug() string {
 	return "phpcs"
 }
+
+func (o *PhpCS) CanFix() bool {
+	return true
+}
+
+func (o *PhpCS) Fix(config config.Config) (string, error) {
+	command := "docker run --rm -v " + config.Path + ":/code ghcr.io/php-cs-fixer/php-cs-fixer:${FIXER_VERSION:-3-php" + config.Version + "} fix --rules=@PSR12 ."
+	return ExecuteCommandAndExpectNoResultToBeCorrect(command)
+}
