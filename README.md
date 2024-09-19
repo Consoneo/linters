@@ -21,7 +21,7 @@ Some linters use Docker to run, so you need to have Docker installed on your mac
 Generate a `.linter.yaml` the configuration file:
 
 ```console
-linter init
+linters init
 ```
 
 Edit the `.linter.yaml` file to fit your needs.
@@ -45,7 +45,7 @@ lints:
 Then lint your files:
 
 ```console
-linter lint
+linters lint
 ```
 
 ## Auto-fix
@@ -53,7 +53,7 @@ linter lint
 Some linters can fix the code for you:
 
 ```console
-linter fix
+linters fix
 ```
 
 ## Integration with git
@@ -62,7 +62,7 @@ linter fix
 You can initialize a pre-commit hook with:
 
 ```console
-linter install
+linters install
 ```
 
 ## Rules
@@ -70,7 +70,7 @@ linter install
 Get the list of rules with:
 
 ```bash
-linter rules
+linters rules
 ```
 
 Today, the following linters are available:
