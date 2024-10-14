@@ -48,6 +48,10 @@ func main() {
 						fmt.Fprintf(os.Stdout, "%s\n", style.Render("Success"))
 					}
 
+					if err != nil {
+						os.Exit(1)
+					}
+
 					analyse.ListReports()
 					return err
 				},
@@ -101,8 +105,32 @@ func main() {
 				Name:    "install",
 				Aliases: []string{"n"},
 				Usage:   "Initialize git hooks in current folder",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:     "pre-push",
+						Aliases:  []string{"p"},
+						Usage:    "Enable on pre-push hook",
+						Category: "Global options",
+					},
+					&cli.BoolFlag{
+						Name:     "pre-commit",
+						Aliases:  []string{"c"},
+						Usage:    "Enable on pre-commit hook",
+						Category: "Global options",
+					},
+				},
 				Action: func(cCtx *cli.Context) error {
-					analyse.Install()
+					if !cCtx.Bool("pre-push") && !cCtx.Bool("pre-commit") {
+						analyse.Install("pre-commit")
+						return nil
+					}
+					if cCtx.Bool("pre-push") {
+						analyse.Install("pre-push")
+					}
+					if cCtx.Bool("pre-commit") {
+						analyse.Install("pre-commit")
+					}
+
 					return nil
 				},
 			},

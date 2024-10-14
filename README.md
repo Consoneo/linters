@@ -18,7 +18,7 @@ Some linters use Docker to run, so you need to have Docker installed on your mac
 
 ## Getting started
 
-Generate a `.linter.yaml` the configuration file:
+Generate a `.linters.yaml` the configuration file:
 
 ```console
 linters init
@@ -59,11 +59,12 @@ linters fix
 ## Integration with git
 
 
-You can initialize a pre-commit hook with:
+You can initialize a pre-commit (by default) hook with:
 
 ```console
 linters install
 ```
+You can specify hooks to create with options `--pre-commit`, `--pre-push`
 
 ## Rules
 
