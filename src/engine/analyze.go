@@ -243,7 +243,7 @@ func (o *Analyse) InitConfig() {
 	defer file.Close()
 
 	template := `
-	lints:
+lints:
   php:
     version: "8.4"
     src:
@@ -275,7 +275,7 @@ func (o *Analyse) InitConfig() {
 	fmt.Println("File .linters.yaml created")
 }
 
-func (o *Analyse) Install() {
+func (o *Analyse) Install(eventName string) {
 
 	// Ensure current dir is a git repository
 	if _, err := os.Stat(".git"); os.IsNotExist(err) {
@@ -284,9 +284,9 @@ func (o *Analyse) Install() {
 	}
 
 	// create a pre-commit hook
-	hookFile := ".git/hooks/pre-commit"
+	hookFile := ".git/hooks/"+eventName
 	if _, err := os.Stat(hookFile); !os.IsNotExist(err) {
-		fmt.Println("pre-commit hook already exists")
+		fmt.Println(eventName+" hook already exists")
 		os.Exit(1)
 	}
 
@@ -314,7 +314,7 @@ func (o *Analyse) Install() {
 		os.Exit(1)
 	}
 
-	fmt.Println("pre-commit hook created")
+	fmt.Println(eventName+" hook created")
 }
 
 func (o *Analyse) ListRules() {
